@@ -17,6 +17,7 @@ vim.keymap.set("n", "<CA-j>", ":m .+1<CR>==")
 vim.keymap.set("n", "<CA-k>", ":m .-2<CR>==")
 vim.keymap.set("v", "<CA-j>", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "<CA-k>", ":m '<-2<CR>gv=gv")
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
 vim.keymap.set("n", "<leader>fa", vim.lsp.buf.code_action, opts)
 vim.keymap.set("n", "<leader>n", function()
     if vim.o.wrap then
