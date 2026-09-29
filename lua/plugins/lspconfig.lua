@@ -30,6 +30,9 @@ return {
                 "dockerls",
                 "matlab_ls",
                 "tinymist",
+                "html",
+                "cssls",
+                "ts_ls",
             }
 
             local formatters_and_linters = {
@@ -40,6 +43,7 @@ return {
                 "shfmt",
                 "odinfmt",
                 "stylua",
+                "prettier",
             }
 
             mason.setup()
@@ -77,6 +81,7 @@ return {
                                 "--header-insertion-decorators",
                                 "--all-scopes-completion",
                             }
+
                             opts.root_dir = lspconfig.util.root_pattern(".clangd", "compile_commands.json", ".git")
                         elseif server_name == "gopls" then
                             opts.settings = {
@@ -160,6 +165,7 @@ return {
                     builtins.formatting.stylua,
                     builtins.formatting.shfmt,
                     builtins.diagnostics.golangci_lint,
+                    builtins.formatting.prettier,
                     typstyle,
                     odinfmt,
                 },

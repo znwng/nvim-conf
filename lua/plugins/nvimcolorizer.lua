@@ -2,23 +2,17 @@ return {
     {
         "NvChad/nvim-colorizer.lua",
         lazy = false,
-        config = function()
-            require("colorizer").setup({
-                filetypes = { "markdown", "lua" },
-                options = {
-                    parsers = {
-                        rgb = true,
-                        rrggbb = true,
-                        rrggbbaa = true,
-                        names = true,
-                        hsl = true,
-                        css = true,
-                    },
-                    display = {
-                        mode = "background",
-                    },
-                },
-            })
-        end,
+        opts = {
+            filetypes = { "markdown", "lua" },
+
+            user_default_options = {
+                names = false,
+                rgb_fn = true,
+                hsl_fn = false,
+                RRGGBB = true,
+                RRGGBBAA = true,
+                mode = "background",
+            },
+        },
     },
 }
