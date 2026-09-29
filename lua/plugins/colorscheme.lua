@@ -35,6 +35,7 @@ return {
             vim.api.nvim_set_hl(0, "ColorColumn", { bg = palette.highlight_low })
             vim.api.nvim_set_hl(0, "CursorLine", { bg = palette.highlight_low })
             vim.api.nvim_set_hl(0, "CursorColumn", { bg = palette.highlight_low })
+            vim.api.nvim_set_hl(0, "Comment", { fg = palette.muted, italic = true })
 
             -- Diagnostics
             local diagnostic_colors = {
