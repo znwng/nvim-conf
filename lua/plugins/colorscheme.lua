@@ -1,53 +1,57 @@
 return {
     {
-        "vague-theme/vague.nvim",
-        name = "vague",
+        "rose-pine/neovim",
+        name = "rose-pine",
         lazy = false,
         priority = 1000,
 
         opts = {
-            transparent = true,
-            italic = false,
+            variant = "moon",
 
-            on_highlights = function(highlights, colors)
-                -- Statusline
-                highlights.StatusLine = { bg = "NONE", fg = colors.fg }
-                highlights.StatusLineMode = { bg = colors.inactiveBg, fg = colors.warning, bold = true }
-                highlights.StatusLinePath = { bg = colors.inactiveBg, fg = colors.fg }
-                highlights.StatusLineBranch = { bg = colors.inactiveBg, fg = colors.keyword }
-                highlights.StatusLineError = { bg = colors.inactiveBg, fg = colors.error }
-                highlights.StatusLineWarn = { bg = colors.inactiveBg, fg = colors.warning }
-                highlights.StatusLineHint = { bg = colors.inactiveBg, fg = colors.hint }
-                highlights.StatusLineLines = { bg = colors.inactiveBg, fg = colors.comment }
-                highlights.StatusLineCur = { bg = colors.inactiveBg, fg = colors.func, bold = true }
-                highlights.ColorColumn = { bg = colors.line }
-                highlights.CursorLine = { bg = colors.line }
-                highlights.CursorColumn = { bg = colors.line }
-                highlights.Comment = { fg = colors.comment, italic = true }
-
-                -- Diagnostics
-                local diagnostic_colors = {
-                    DiagnosticUnderlineError = colors.error,
-                    DiagnosticUnderlineWarn = colors.warning,
-                    DiagnosticUnderlineInfo = colors.hint,
-                    DiagnosticUnderlineHint = colors.hint,
-                }
-
-                for group, color in pairs(diagnostic_colors) do
-                    highlights[group] = {
-                        underline = true,
-                        undercurl = false,
-                        sp = color,
-                    }
-                end
-            end,
+            styles = {
+                transparency = true,
+                italic = false,
+                bold = true,
+            },
         },
 
         config = function(_, opts)
-            local vague = require("vague")
+            local rose_pine = require("rose-pine")
+            local palette = require("rose-pine.palette")
 
-            vague.setup(opts)
-            vim.cmd.colorscheme("vague")
+            rose_pine.setup(opts)
+            vim.cmd.colorscheme("rose-pine-moon")
+
+            -- Statusline
+            vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE", fg = palette.text })
+            vim.api.nvim_set_hl(0, "StatusLineMode", { bg = palette.surface, fg = palette.foam, bold = true })
+            vim.api.nvim_set_hl(0, "StatusLinePath", { bg = palette.surface, fg = palette.text })
+            vim.api.nvim_set_hl(0, "StatusLineBranch", { bg = palette.surface, fg = palette.iris })
+            vim.api.nvim_set_hl(0, "StatusLineError", { bg = palette.surface, fg = palette.love })
+            vim.api.nvim_set_hl(0, "StatusLineWarn", { bg = palette.surface, fg = palette.gold })
+            vim.api.nvim_set_hl(0, "StatusLineHint", { bg = palette.surface, fg = palette.pine })
+            vim.api.nvim_set_hl(0, "StatusLineLines", { bg = palette.surface, fg = palette.subtle })
+            vim.api.nvim_set_hl(0, "StatusLineCur", { bg = palette.surface, fg = palette.rose, bold = true })
+            vim.api.nvim_set_hl(0, "ColorColumn", { bg = palette.highlight_low })
+            vim.api.nvim_set_hl(0, "CursorLine", { bg = palette.highlight_low })
+            vim.api.nvim_set_hl(0, "CursorColumn", { bg = palette.highlight_low })
+            vim.api.nvim_set_hl(0, "Comment", { fg = palette.muted, italic = true })
+
+            -- Diagnostics
+            local diagnostic_colors = {
+                DiagnosticUnderlineError = palette.love,
+                DiagnosticUnderlineWarn = palette.gold,
+                DiagnosticUnderlineInfo = palette.foam,
+                DiagnosticUnderlineHint = palette.pine,
+            }
+
+            for group, color in pairs(diagnostic_colors) do
+                vim.api.nvim_set_hl(0, group, {
+                    underline = true,
+                    undercurl = false,
+                    sp = color,
+                })
+            end
         end,
     },
 }
