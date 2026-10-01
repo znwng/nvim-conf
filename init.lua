@@ -37,7 +37,7 @@ vim.opt.signcolumn = "yes"
 vim.opt.number = true
 vim.opt.scrolloff = 10
 vim.opt.showmode = false
--- vim.opt.colorcolumn = "120"
+vim.opt.colorcolumn = "100"
 vim.opt.cursorline = true
 vim.opt.mouse = ""
 
