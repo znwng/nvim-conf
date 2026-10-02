@@ -20,13 +20,13 @@ vim.keymap.set("v", "<CA-k>", ":m '<-2<CR>gv=gv")
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
 vim.keymap.set("n", "<leader>fa", vim.lsp.buf.code_action, opts)
 vim.keymap.set("n", "<leader>n", function()
-    if vim.o.wrap then
-        vim.o.wrap = false
-        vim.notify("Word wrap: OFF", vim.log.levels.INFO)
-    else
-        vim.o.wrap = true
-        vim.notify("Word wrap: ON", vim.log.levels.INFO)
-    end
+  if vim.o.wrap then
+    vim.o.wrap = false
+    vim.notify("Word wrap: OFF", vim.log.levels.INFO)
+  else
+    vim.o.wrap = true
+    vim.notify("Word wrap: ON", vim.log.levels.INFO)
+  end
 end, { desc = "Toggle word wrap" })
 
 -- General Editor Settings
@@ -48,6 +48,16 @@ vim.opt.shiftwidth = 4
 vim.opt.smartindent = true
 vim.opt.autoindent = true
 
+-- C++
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "cpp", "cxx", "cc", "c" },
+  callback = function()
+    vim.opt_local.expandtab = false
+    vim.opt_local.tabstop = 2
+    vim.opt_local.shiftwidth = 2
+  end,
+})
+
 -- Search Behavior
 vim.opt.incsearch = true
 vim.opt.ignorecase = true
@@ -60,78 +70,78 @@ vim.opt.backup = false
 vim.opt.undofile = true
 local undodir = vim.fn.expand("~/.vim/undodir")
 if vim.fn.isdirectory(undodir) == 0 then
-    vim.fn.mkdir(undodir, "p")
+  vim.fn.mkdir(undodir, "p")
 end
 vim.opt.undodir = undodir
 
 -- Helper Functions
 local function diag_count(sev_name)
-    local sev = vim.diagnostic.severity[sev_name:upper()]
-    if not sev then
-        return 0
-    end
-    local diags = vim.diagnostic.get(0, { severity = sev })
-    return #diags
+  local sev = vim.diagnostic.severity[sev_name:upper()]
+  if not sev then
+    return 0
+  end
+  local diags = vim.diagnostic.get(0, { severity = sev })
+  return #diags
 end
 
 -- Git branch caching for performance
 local branch_cache = {}
 local function git_branch()
-    local buf = vim.api.nvim_get_current_buf()
-    if branch_cache[buf] then
-        return branch_cache[buf]
-    end
-    local dir = vim.fn.expand("%:p:h")
-    if dir == "" or vim.fn.isdirectory(dir) == 0 then
-        return "~"
-    end
-    local cmd = "git -C " .. vim.fn.fnameescape(dir) .. " rev-parse --abbrev-ref HEAD 2>/dev/null"
-    local branch = vim.fn.trim(vim.fn.system(cmd))
-    branch_cache[buf] = branch ~= "" and branch or "~"
+  local buf = vim.api.nvim_get_current_buf()
+  if branch_cache[buf] then
     return branch_cache[buf]
+  end
+  local dir = vim.fn.expand("%:p:h")
+  if dir == "" or vim.fn.isdirectory(dir) == 0 then
+    return "~"
+  end
+  local cmd = "git -C " .. vim.fn.fnameescape(dir) .. " rev-parse --abbrev-ref HEAD 2>/dev/null"
+  local branch = vim.fn.trim(vim.fn.system(cmd))
+  branch_cache[buf] = branch ~= "" and branch or "~"
+  return branch_cache[buf]
 end
 vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter" }, {
-    callback = function()
-        branch_cache[vim.api.nvim_get_current_buf()] = nil
-    end,
+  callback = function()
+    branch_cache[vim.api.nvim_get_current_buf()] = nil
+  end,
 })
 
 -- Statusline Helpers
 _G._statusline = {
-    diag_count = diag_count,
-    git_branch = git_branch,
+  diag_count = diag_count,
+  git_branch = git_branch,
 }
 
 _G._statusline.mode = function()
-    local m = vim.api.nvim_get_mode().mode
-    local map = {
-        n = "NR",
-        i = "IN",
-        v = "VS",
-        V = "VL",
-        ["\22"] = "VB",
-        c = "CD",
-        R = "RP",
-        t = "TR",
-    }
-    return map[m] or m
+  local m = vim.api.nvim_get_mode().mode
+  local map = {
+    n = "NR",
+    i = "IN",
+    v = "VS",
+    V = "VL",
+    ["\22"] = "VB",
+    c = "CD",
+    R = "RP",
+    t = "TR",
+  }
+  return map[m] or m
 end
 
 _G._statusline.line_count = function()
-    return vim.api.nvim_buf_line_count(0)
+  return vim.api.nvim_buf_line_count(0)
 end
 
 vim.o.statusline = table.concat({
-    "%#StatusLineMode#",
-    "[%{v:lua._statusline.mode()}] ",
-    "%#StatusLinePath#%{expand('%:p:~')} ",
-    "%#StatusLineBranch#[%{v:lua._statusline.git_branch()}] ",
-    "%m %=",
-    "%#StatusLineError#E%{v:lua._statusline.diag_count('ERROR')} ",
-    "%#StatusLineWarn#W%{v:lua._statusline.diag_count('WARN')} ",
-    "%#StatusLineHint#H%{v:lua._statusline.diag_count('HINT')} ",
-    "%#StatusLineLines#[%{v:lua._statusline.line_count()}] ",
-    "%#StatusLineCur#[%l:%c]%#StatusLine#",
+  "%#StatusLineMode#",
+  "[%{v:lua._statusline.mode()}] ",
+  "%#StatusLinePath#%{expand('%:p:~')} ",
+  "%#StatusLineBranch#[%{v:lua._statusline.git_branch()}] ",
+  "%m %=",
+  "%#StatusLineError#E%{v:lua._statusline.diag_count('ERROR')} ",
+  "%#StatusLineWarn#W%{v:lua._statusline.diag_count('WARN')} ",
+  "%#StatusLineHint#H%{v:lua._statusline.diag_count('HINT')} ",
+  "%#StatusLineLines#[%{v:lua._statusline.line_count()}] ",
+  "%#StatusLineCur#[%l:%c]%#StatusLine#",
 })
 
 -- Plugins
@@ -139,85 +149,85 @@ require("config.lazy")
 
 -- Autocommands
 vim.api.nvim_create_autocmd("ColorScheme", {
-    callback = function()
-        for _, group in ipairs({
-            "CmpBorder",
-            "CmpDocBorder",
-            "CmpDoc",
-            "Pmenu",
-            "PmenuSel",
-            "PmenuBorder",
-        }) do
-            vim.api.nvim_set_hl(0, group, { bg = "none" })
-        end
-        vim.api.nvim_set_hl(0, "PmenuSel", { bg = "none", blend = 0 })
-    end,
+  callback = function()
+    for _, group in ipairs({
+      "CmpBorder",
+      "CmpDocBorder",
+      "CmpDoc",
+      "Pmenu",
+      "PmenuSel",
+      "PmenuBorder",
+    }) do
+      vim.api.nvim_set_hl(0, group, { bg = "none" })
+    end
+    vim.api.nvim_set_hl(0, "PmenuSel", { bg = "none", blend = 0 })
+  end,
 })
 
 vim.api.nvim_set_hl(0, "MatchParen", {
-    underline = true,
-    bold = false,
-    bg = "NONE",
-    fg = "NONE",
+  underline = true,
+  bold = false,
+  bg = "NONE",
+  fg = "NONE",
 })
 
 vim.api.nvim_create_autocmd("BufReadPost", {
-    callback = function()
-        local mark = vim.api.nvim_buf_get_mark(0, '"')
-        local lcount = vim.api.nvim_buf_line_count(0)
-        if mark[1] > 0 and mark[1] <= lcount then
-            vim.api.nvim_win_set_cursor(0, mark)
-        end
-    end,
+  callback = function()
+    local mark = vim.api.nvim_buf_get_mark(0, '"')
+    local lcount = vim.api.nvim_buf_line_count(0)
+    if mark[1] > 0 and mark[1] <= lcount then
+      vim.api.nvim_win_set_cursor(0, mark)
+    end
+  end,
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = "make",
-    callback = function()
-        vim.opt_local.expandtab = false
-    end,
+  pattern = "make",
+  callback = function()
+    vim.opt_local.expandtab = false
+  end,
 })
 
 -- Formatting helpers
 function _G.format_buffer()
-    if vim.lsp.buf.server_ready() then
-        vim.lsp.buf.format({
-            async = true,
-        })
-    end
+  if vim.lsp.buf.server_ready() then
+    vim.lsp.buf.format({
+      async = true,
+    })
+  end
 end
 
 -- Define a custom highlight group for yank
 vim.api.nvim_set_hl(0, "YankHighlight", {
-    fg = nil,
-    bg = "#252525",
-    bold = true,
-    underline = false,
+  fg = nil,
+  bg = "#252525",
+  bold = true,
+  underline = false,
 })
 
 -- Highlight yanked text using the custom group
 vim.api.nvim_set_hl(0, "YankHighlight", {
-    fg = "#1a1b26",
-    bg = "#7aa2f7",
+  fg = "#1a1b26",
+  bg = "#7aa2f7",
 })
 
 vim.api.nvim_create_autocmd("TextYankPost", {
-    callback = function()
-        vim.highlight.on_yank({
-            higroup = "YankHighlight",
-            timeout = 200,
-        })
-    end,
+  callback = function()
+    vim.highlight.on_yank({
+      higroup = "YankHighlight",
+      timeout = 200,
+    })
+  end,
 })
 
 local file = io.open(vim.fn.expand("~/.config/nvim/colorscheme"), "r")
 
 if file then
-    local colorscheme = file:read("*l")
-    file:close()
+  local colorscheme = file:read("*l")
+  file:close()
 
-    if colorscheme then
-        colorscheme = colorscheme:gsub("^%s+", ""):gsub("%s+$", "")
-        vim.cmd.colorscheme(colorscheme)
-    end
+  if colorscheme then
+    colorscheme = colorscheme:gsub("^%s+", ""):gsub("%s+$", "")
+    vim.cmd.colorscheme(colorscheme)
+  end
 end
