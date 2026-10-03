@@ -48,16 +48,6 @@ vim.opt.shiftwidth = 4
 vim.opt.smartindent = true
 vim.opt.autoindent = true
 
--- C++
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "cpp", "cxx", "cc", "c" },
-  callback = function()
-    vim.opt_local.expandtab = false
-    vim.opt_local.tabstop = 2
-    vim.opt_local.shiftwidth = 2
-  end,
-})
-
 -- Search Behavior
 vim.opt.incsearch = true
 vim.opt.ignorecase = true
