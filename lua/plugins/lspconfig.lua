@@ -33,6 +33,7 @@ return {
         "html",
         "cssls",
         "ts_ls",
+        "jdtls",
       }
 
       local formatters_and_linters = {
@@ -44,6 +45,7 @@ return {
         "odinfmt",
         "stylua",
         "prettier",
+        "google_java_format",
       }
 
       mason.setup()
@@ -122,6 +124,38 @@ return {
                   },
                 },
               }
+            elseif server_name == "jdtls" then
+              opts.settings = {
+                java = {
+                  signatureHelp = {
+                    enabled = true,
+                  },
+                  contentProvider = {
+                    preferred = "fernflower",
+                  },
+                  completion = {
+                    favoriteStaticMembers = {},
+                    importOrder = {
+                      "java",
+                      "javax",
+                      "org",
+                      "com",
+                    },
+                  },
+                  sources = {
+                    organizeImports = {
+                      starThreshold = 9999,
+                      staticStarThreshold = 9999,
+                    },
+                  },
+                  format = {
+                    enabled = true,
+                  },
+                  saveActions = {
+                    organizeImports = false,
+                  },
+                },
+              }
             end
 
             lspconfig[server_name].setup(opts)
@@ -166,6 +200,7 @@ return {
           builtins.formatting.shfmt,
           builtins.diagnostics.golangci_lint,
           builtins.formatting.prettier,
+          builtins.formatting.google_java_format,
           typstyle,
           odinfmt,
         },
@@ -173,7 +208,6 @@ return {
 
       vim.api.nvim_create_user_command("MasonInstallAll", function()
         local all = vim.list_extend(vim.deepcopy(servers), formatters_and_linters)
-
         vim.cmd("MasonInstall " .. table.concat(all, " "))
       end, {})
 
@@ -193,7 +227,6 @@ return {
       })
 
       vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename)
-
       vim.keymap.set("n", "<leader>fm", function()
         vim.lsp.buf.format({
           bufnr = vim.api.nvim_get_current_buf(),
@@ -207,25 +240,11 @@ return {
       vim.keymap.set("n", "<leader>a", function()
         vim.diagnostic.setloclist()
         vim.cmd("lopen")
-      end, {
-        noremap = true,
-        silent = true,
-      })
+      end, { noremap = true, silent = true })
 
-      vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, {
-        noremap = false,
-        silent = false,
-      })
-
-      vim.keymap.set("n", "]d", vim.diagnostic.goto_next, {
-        noremap = false,
-        silent = false,
-      })
-
-      vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, {
-        noremap = true,
-        silent = true,
-      })
+      vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { noremap = false, silent = false })
+      vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { noremap = false, silent = false })
+      vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { noremap = true, silent = true })
     end,
   },
 }
