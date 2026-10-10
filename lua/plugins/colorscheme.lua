@@ -21,9 +21,9 @@ return {
                 hl.ColorColumn = { bg = c.bg_alt }
                 hl.CursorLine = { bg = c.bg_alt }
                 hl.CursorColumn = { bg = c.bg_alt }
-                hl.Comment = { fg = c.gray5, italic = false }
-                hl["@comment"] = { fg = c.gray5, italic = false }
-                hl["@comment.documentation"] = { fg = c.gray5, italic = false }
+                hl.Comment = { fg = c.glow, italic = false }
+                hl["@comment"] = { fg = c.glow, italic = false }
+                hl["@comment.documentation"] = { fg = c.glow, italic = false }
                 hl.DiagnosticUnderlineError = { underline = true, undercurl = false, sp = c.error }
                 hl.DiagnosticUnderlineWarn = { underline = true, undercurl = false, sp = c.warning }
                 hl.DiagnosticUnderlineInfo = { underline = true, undercurl = false, sp = c.info }
